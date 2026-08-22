@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "helpful-support"
+version = "0.1.0"
+description = "Local searchable field library for practical software and science"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Diego Di Natale"}]
+dependencies = []
+
+[project.scripts]
+helpful-support = "helpful_support.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["helpful_support*"]
