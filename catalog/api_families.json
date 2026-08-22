@@ -1,0 +1,363 @@
+{
+  "version": "1.0",
+  "families": [
+    {
+      "slug": "data-public",
+      "name": "Datos públicos y estadísticos",
+      "problems": [
+        "Series macroeconómicas",
+        "demografía",
+        "mercados y datos abiertos"
+      ],
+      "examples": [
+        "World Bank API",
+        "BCRPData",
+        "INEI",
+        "Yahoo Finance"
+      ],
+      "risks": [
+        "revisiones históricas",
+        "frecuencia desigual",
+        "licencias"
+      ],
+      "project_uses": [
+        "dntl_economia",
+        "dntl_datos",
+        "pricing inmobiliario"
+      ],
+      "tags": [
+        "economía",
+        "series de tiempo",
+        "open data"
+      ]
+    },
+    {
+      "slug": "crm-marketing",
+      "name": "CRM, marketing y atribución",
+      "problems": [
+        "captura de leads",
+        "campañas",
+        "embudos",
+        "atribución"
+      ],
+      "examples": [
+        "Sperant webhook",
+        "Meta Marketing API",
+        "HubSpot",
+        "Google Ads"
+      ],
+      "risks": [
+        "PII",
+        "límites de tasa",
+        "atribución imperfecta"
+      ],
+      "project_uses": [
+        "bd_replica_crm",
+        "expertos_en_lavados",
+        "lead scoring"
+      ],
+      "tags": [
+        "CRM",
+        "leads",
+        "marketing"
+      ]
+    },
+    {
+      "slug": "messaging",
+      "name": "Mensajería y conversaciones",
+      "problems": [
+        "notificaciones",
+        "chatbots",
+        "seguimiento"
+      ],
+      "examples": [
+        "WhatsApp Cloud API",
+        "Slack",
+        "Telegram",
+        "email transaccional"
+      ],
+      "risks": [
+        "consentimiento",
+        "plantillas",
+        "duplicación de mensajes"
+      ],
+      "project_uses": [
+        "dntl_chatbot",
+        "alertas operativas"
+      ],
+      "tags": [
+        "chatbot",
+        "webhook",
+        "mensajería"
+      ]
+    },
+    {
+      "slug": "llm-ai",
+      "name": "LLM, embeddings y modelos de IA",
+      "problems": [
+        "generación",
+        "clasificación",
+        "extracción",
+        "RAG"
+      ],
+      "examples": [
+        "OpenAI API",
+        "modelos locales",
+        "rerankers"
+      ],
+      "risks": [
+        "alucinación",
+        "prompt injection",
+        "costo",
+        "datos sensibles"
+      ],
+      "project_uses": [
+        "dntl_chatbot",
+        "helpful_support RAG",
+        "dntl_economia"
+      ],
+      "tags": [
+        "LLM",
+        "embeddings",
+        "RAG"
+      ]
+    },
+    {
+      "slug": "geospatial",
+      "name": "Geoespacial, mapas y movilidad",
+      "problems": [
+        "geocodificación",
+        "distancias",
+        "isócronas",
+        "mapas"
+      ],
+      "examples": [
+        "OpenStreetMap",
+        "Nominatim",
+        "Mapbox",
+        "Google Maps"
+      ],
+      "risks": [
+        "términos de uso",
+        "sesgo geográfico",
+        "privacidad de ubicación"
+      ],
+      "project_uses": [
+        "pricing por entorno",
+        "búsqueda inmobiliaria"
+      ],
+      "tags": [
+        "GIS",
+        "mapas",
+        "ubicación"
+      ]
+    },
+    {
+      "slug": "payments",
+      "name": "Pagos, facturación y economía unitaria",
+      "problems": [
+        "cobros",
+        "suscripciones",
+        "conciliación"
+      ],
+      "examples": [
+        "Stripe",
+        "Mercado Pago",
+        "Niubiz"
+      ],
+      "risks": [
+        "PCI",
+        "webhooks duplicados",
+        "reembolsos"
+      ],
+      "project_uses": [
+        "productos SaaS",
+        "Limpia Fast"
+      ],
+      "tags": [
+        "pagos",
+        "fintech",
+        "webhook"
+      ]
+    },
+    {
+      "slug": "storage-database",
+      "name": "Bases de datos, storage y vectores",
+      "problems": [
+        "persistencia",
+        "archivos",
+        "búsqueda semántica"
+      ],
+      "examples": [
+        "PostgreSQL",
+        "Supabase",
+        "S3",
+        "pgvector"
+      ],
+      "risks": [
+        "migraciones",
+        "backups",
+        "permisos"
+      ],
+      "project_uses": [
+        "medallio_dw",
+        "RAG",
+        "aplicaciones Vercel"
+      ],
+      "tags": [
+        "SQL",
+        "storage",
+        "vector"
+      ]
+    },
+    {
+      "slug": "devops-observability",
+      "name": "Entrega, nube y observabilidad",
+      "problems": [
+        "despliegue",
+        "logs",
+        "métricas",
+        "alertas"
+      ],
+      "examples": [
+        "GitHub Actions",
+        "Vercel",
+        "OpenTelemetry",
+        "Sentry"
+      ],
+      "risks": [
+        "secretos",
+        "costos invisibles",
+        "fatiga de alertas"
+      ],
+      "project_uses": [
+        "todos los repositorios productivos"
+      ],
+      "tags": [
+        "CI/CD",
+        "monitoring",
+        "MLOps"
+      ]
+    },
+    {
+      "slug": "identity-security",
+      "name": "Identidad, autorización y seguridad",
+      "problems": [
+        "login",
+        "roles",
+        "secretos",
+        "auditoría"
+      ],
+      "examples": [
+        "OAuth 2.0",
+        "OIDC",
+        "JWT",
+        "secret managers"
+      ],
+      "risks": [
+        "sobrepermisos",
+        "tokens filtrados",
+        "sesiones inseguras"
+      ],
+      "project_uses": [
+        "dashboards",
+        "apps multiusuario",
+        "integraciones"
+      ],
+      "tags": [
+        "auth",
+        "security",
+        "privacy"
+      ]
+    },
+    {
+      "slug": "documents-media",
+      "name": "Documentos, OCR y multimedia",
+      "problems": [
+        "extracción de PDFs",
+        "imágenes",
+        "audio",
+        "video"
+      ],
+      "examples": [
+        "OCR",
+        "speech-to-text",
+        "document parsers"
+      ],
+      "risks": [
+        "copyright",
+        "PII",
+        "archivos maliciosos"
+      ],
+      "project_uses": [
+        "contratos inmobiliarios",
+        "dntl_art",
+        "bibliotecas RAG"
+      ],
+      "tags": [
+        "OCR",
+        "media",
+        "documents"
+      ]
+    },
+    {
+      "slug": "experimentation",
+      "name": "Experimentación y feature flags",
+      "problems": [
+        "A/B tests",
+        "rollouts",
+        "medición causal"
+      ],
+      "examples": [
+        "feature flags",
+        "experimentos aleatorios",
+        "bandits"
+      ],
+      "risks": [
+        "muestras pequeñas",
+        "peeking",
+        "métricas mal definidas"
+      ],
+      "project_uses": [
+        "lead scoring",
+        "landing pages",
+        "pricing"
+      ],
+      "tags": [
+        "causalidad",
+        "experimentos",
+        "growth"
+      ]
+    },
+    {
+      "slug": "automation-events",
+      "name": "Automatización, colas y eventos",
+      "problems": [
+        "jobs",
+        "webhooks",
+        "procesamiento asíncrono"
+      ],
+      "examples": [
+        "cron",
+        "queues",
+        "event buses",
+        "workflow engines"
+      ],
+      "risks": [
+        "doble ejecución",
+        "orden de eventos",
+        "dead letters"
+      ],
+      "project_uses": [
+        "réplica horaria",
+        "NIDO",
+        "alertas"
+      ],
+      "tags": [
+        "events",
+        "queues",
+        "idempotency"
+      ]
+    }
+  ]
+}
