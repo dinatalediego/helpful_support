@@ -19,8 +19,7 @@ La primera versión incluye un RAG local sin costo basado en Markdown + SQLite F
 Requiere Python 3.11+ y no necesita dependencias para el núcleo.
 
 ```bash
-python -m helpful_support.cli doctor
-python -m helpful_support.cli index
+python scripts/verify.py
 python -m helpful_support.cli search "webhooks idempotencia"
 python -m helpful_support.cli api-family geospatial
 python -m unittest discover -s tests -v
@@ -29,8 +28,7 @@ python -m unittest discover -s tests -v
 En Windows PowerShell:
 
 ```powershell
-py -m helpful_support.cli doctor
-py -m helpful_support.cli index
+py scripts/verify.py
 py -m helpful_support.cli search "priorización de leads"
 ```
 
@@ -78,4 +76,4 @@ La búsqueda lexical es el baseline auditable. Solo conviene añadir embeddings 
 
 ## Licencia
 
-Uso educativo y de soporte a proyectos. Ver [LICENSE](LICENSE).
+MIT. Ver [LICENSE](LICENSE).
