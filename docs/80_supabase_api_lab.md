@@ -1,4 +1,4 @@
-# Supabase API Lab v0.2
+# Supabase API Lab v0.3
 
 Laboratorio vivo para aprender APIs con el proyecto personal de Supabase sin mezclar datos de `limpiafast-growth-os`.
 
@@ -9,6 +9,7 @@ Laboratorio vivo para aprender APIs con el proyecto personal de Supabase sin mez
 - Auth y RLS para prácticas privadas.
 - Realtime sobre `hs_learning_runs`.
 - Edge Function autenticada `hs-api-lab`.
+- Métricas, evidencia y feedback para cerrar cada ejecución.
 - Full-text search como baseline anterior a pgvector.
 
 ## Modelo
@@ -57,18 +58,55 @@ Aprendizaje: una función PostgreSQL expuesta como endpoint POST.
 
 ## Ejercicio 3: Auth + RLS + Edge Function
 
-1. Crea tu usuario de laboratorio en Supabase Auth.
-2. Ejecuta:
+Para crear un run nuevo y completar todo el flujo:
 
 ```powershell
 py examples/supabase_authenticated_lab.py
 ```
 
-La contraseña no se muestra ni se guarda. El flujo inicia sesión, inserta una práctica privada protegida por RLS y consulta la Edge Function con el JWT.
+Para cerrar un run existente que continúa en `running`:
 
-## Ejercicio 4: Realtime
+```powershell
+py examples/supabase_authenticated_lab.py --run-id aae6afbf-1ad4-429c-97a3-4674349f5897
+```
 
-Suscríbete a cambios de `hs_learning_runs` desde un cliente autenticado. La tabla ya pertenece a la publicación `supabase_realtime`; RLS continúa determinando qué filas puede recibir el usuario.
+La contraseña no se muestra ni se guarda. El JWT vive solo en memoria. El script:
+
+1. inicia sesión;
+2. invoca la Edge Function, que usa el RPC;
+3. mide la latencia;
+4. actualiza el run mediante RLS a `succeeded` o `failed`;
+5. conserva el HTTP status y evidencia JSON;
+6. solicita una evaluación humana e inserta feedback privado.
+
+Resultado esperado:
+
+```text
+Edge search results: 3 (... ms)
+Run status: succeeded
+Feedback created: ...
+Ciclo cerrado: Auth → RLS → RPC → Edge → métrica → feedback
+```
+
+## Ejercicio 4: observar el UPDATE con Realtime
+
+Abre un primer PowerShell en la raíz del repositorio:
+
+```powershell
+py -m http.server 8080
+Start-Process http://localhost:8080/examples/realtime_learning_runs.html
+```
+
+En el navegador introduce URL, publishable key, usuario, contraseña y, opcionalmente, el run ID. Espera a ver `subscribed`. La página usa `@supabase/supabase-js` 2.111.0 fijado, no persiste la sesión y filtra por el `user_id` autenticado; RLS sigue siendo la autoridad.
+
+En un segundo PowerShell ejecuta el comando del ejercicio 3. El observador mostrará el `UPDATE` con `status`, `latency_ms`, `response_status` y `evidence`.
+
+## Comprobación en Supabase
+
+En Table Editor:
+
+- `hs_learning_runs`: el run debe quedar en `succeeded`, con `response_status = 200`, latencia y evidencia.
+- `hs_search_feedback`: debe existir una fila del mismo usuario con la consulta, los slugs recuperados y la evaluación.
 
 ## Prueba remota
 
@@ -84,4 +122,4 @@ No añadir embeddings todavía. Registra consultas y feedback; migra a búsqueda
 
 ## Riesgos aceptados
 
-Los asesores advierten que las tablas con permisos Data API también son visibles a través de GraphQL. Es intencional para el catálogo público y seguro para objetos privados porque RLS aplica por usuario. Los índices nuevos pueden figurar temporalmente como no utilizados hasta acumular tráfico.
+Las tablas con permisos Data API también pueden quedar visibles a través de GraphQL. Es intencional para el catálogo público y seguro para objetos privados porque RLS aplica por usuario. Los índices nuevos pueden figurar temporalmente como no utilizados hasta acumular tráfico.
