@@ -4,10 +4,27 @@ Biblioteca práctica y buscable para convertir ideas de software, datos y cienci
 
 ## Qué resuelve
 
-Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.3 combina dos laboratorios:
+Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.4 combina tres laboratorios:
 
 - **Local:** Markdown + SQLite FTS5, gratuito y reproducible.
 - **Remoto:** Supabase Data API + Auth/RLS + RPC + Realtime + Edge Function + feedback.
+- **Visual:** Next.js + Vercel para observar las APIs trabajando en tiempo real.
+
+## API Experience Lab v0.4
+
+La webapp ubicada en `apps/web` incluye tres experiencias conectadas al proyecto Supabase:
+
+- API X-Ray para inspeccionar REST, RPC y Edge Function.
+- Auth/RLS Challenge para diferenciar identidad y autorización por fila.
+- Realtime Monitor para observar INSERT y UPDATE por WebSocket.
+
+```powershell
+cd apps/web
+npm ci
+npm run dev
+```
+
+Consulta la [guía del laboratorio visual](docs/90_api_experience_lab.md).
 
 ## Inicio rápido local
 
@@ -54,6 +71,7 @@ El observador [Realtime](examples/realtime_learning_runs.html) permite ver el ca
 - [Mapa hacia tus proyectos](docs/60_project_adoption.md)
 - [Checklist de cierre](docs/70_definition_of_done.md)
 - [Supabase API Lab](docs/80_supabase_api_lab.md)
+- [API Experience Lab](docs/90_api_experience_lab.md)
 - [Catálogo estructurado](catalog/api_families.json)
 
 ## Arquitectura
@@ -69,7 +87,7 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
                          └─ Métricas + feedback
 ```
 
-## Capacidades v0.3
+## Capacidades v0.4
 
 - 12 familias de APIs.
 - Cliente HTTP genérico con timeout, reintentos y backoff.
@@ -80,6 +98,7 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
 - Cierre de runs con status HTTP, latencia y evidencia JSON.
 - Feedback de recuperación protegido por RLS.
 - Observador Realtime autenticado sin persistencia de sesión.
+- Interfaz visual con request/response, desafíos RLS y stream Realtime.
 - Pruebas unitarias y GitHub Actions.
 - Política de seguridad y definición de terminado.
 
