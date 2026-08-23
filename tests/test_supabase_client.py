@@ -56,6 +56,64 @@ class SupabaseClientTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ACCESS_TOKEN"):
             self.client.create_learning_run("Test RLS")
 
+    @patch("urllib.request.urlopen")
+    def test_update_run_uses_patch_user_jwt_and_returns_evidence(self, urlopen):
+        urlopen.return_value = FakeResponse(
+            [{"id": "run-1", "status": "succeeded", "latency_ms": 42}]
+        )
+        row = self.client.update_learning_run(
+            "run-1",
+            status="succeeded",
+            response_status=200,
+            latency_ms=42,
+            succeeded=True,
+            evidence={"result_count": 3},
+            access_token="user-jwt",
+        )
+        request = urlopen.call_args.args[0]
+        body = json.loads(request.data)
+
+        self.assertEqual(request.method, "PATCH")
+        self.assertIn("id=eq.run-1", request.full_url)
+        self.assertEqual(request.get_header("Authorization"), "Bearer user-jwt")
+        self.assertEqual(request.get_header("Prefer"), "return=representation")
+        self.assertEqual(body["status"], "succeeded")
+        self.assertEqual(body["evidence"]["result_count"], 3)
+        self.assertEqual(row["latency_ms"], 42)
+
+    @patch("urllib.request.urlopen")
+    def test_feedback_is_inserted_as_private_user_data(self, urlopen):
+        urlopen.return_value = FakeResponse([{"id": "feedback-1", "useful": True}])
+        row = self.client.create_search_feedback(
+            "webhook idempotencia",
+            ["automation-events", "identity-security"],
+            useful=True,
+            comment="Los resultados permiten cerrar el ejercicio.",
+            access_token="user-jwt",
+        )
+        request = urlopen.call_args.args[0]
+        body = json.loads(request.data)
+
+        self.assertEqual(request.method, "POST")
+        self.assertTrue(request.full_url.endswith("/rest/v1/hs_search_feedback"))
+        self.assertEqual(request.get_header("Authorization"), "Bearer user-jwt")
+        self.assertEqual(body["result_slugs"][0], "automation-events")
+        self.assertTrue(row["useful"])
+
+    @patch("urllib.request.urlopen")
+    def test_empty_rls_update_is_reported_without_claiming_not_found(self, urlopen):
+        urlopen.return_value = FakeResponse([])
+        with self.assertRaisesRegex(Exception, "RLS may deny access"):
+            self.client.update_learning_run(
+                "someone-elses-run",
+                status="failed",
+                response_status=403,
+                latency_ms=1,
+                succeeded=False,
+                evidence={},
+                access_token="user-jwt",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
