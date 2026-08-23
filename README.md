@@ -4,10 +4,10 @@ Biblioteca práctica y buscable para convertir ideas de software, datos y cienci
 
 ## Qué resuelve
 
-Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.2 combina dos laboratorios:
+Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.3 combina dos laboratorios:
 
 - **Local:** Markdown + SQLite FTS5, gratuito y reproducible.
-- **Remoto:** Supabase Data API + Auth/RLS + RPC + Realtime + Edge Function.
+- **Remoto:** Supabase Data API + Auth/RLS + RPC + Realtime + Edge Function + feedback.
 
 ## Inicio rápido local
 
@@ -29,11 +29,19 @@ py -m helpful_support.cli remote-list
 py -m helpful_support.cli remote-search "webhook idempotencia"
 ```
 
-Para completar Auth → RLS → Edge Function:
+Para completar Auth → RLS → RPC → Edge → métrica → feedback:
 
 ```powershell
 py examples/supabase_authenticated_lab.py
 ```
+
+Para cerrar un run existente:
+
+```powershell
+py examples/supabase_authenticated_lab.py --run-id UUID_DEL_RUN
+```
+
+El observador [Realtime](examples/realtime_learning_runs.html) permite ver el cambio de estado en vivo.
 
 ## Mapa de la biblioteca
 
@@ -57,10 +65,11 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
                          ├─ REST / RPC
                          ├─ Auth + RLS
                          ├─ Realtime
-                         └─ Edge Function
+                         ├─ Edge Function
+                         └─ Métricas + feedback
 ```
 
-## Capacidades v0.2
+## Capacidades v0.3
 
 - 12 familias de APIs.
 - Cliente HTTP genérico con timeout, reintentos y backoff.
@@ -68,6 +77,9 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
 - Catálogo público y registros de aprendizaje privados.
 - Búsqueda PostgreSQL flexible por prefijos.
 - Edge Function con JWT obligatorio.
+- Cierre de runs con status HTTP, latencia y evidencia JSON.
+- Feedback de recuperación protegido por RLS.
+- Observador Realtime autenticado sin persistencia de sesión.
 - Pruebas unitarias y GitHub Actions.
 - Política de seguridad y definición de terminado.
 
