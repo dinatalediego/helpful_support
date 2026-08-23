@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Helpful Support · API Experience Lab",
+  title: "Helpful Support · Decision Experience Lab",
   description:
-    "Laboratorio visual para observar REST, RPC, Auth, RLS, Edge Functions y Realtime en acción.",
+    "Demo inmobiliaria para observar el camino desde un dato hasta una decisión y su resultado Realtime.",
 };
 
 export default function RootLayout({

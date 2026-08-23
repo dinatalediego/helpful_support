@@ -4,10 +4,11 @@ import { useState } from "react";
 
 import { ApiXRay } from "@/components/api-xray";
 import { AuthRlsChallenge } from "@/components/auth-rls-challenge";
+import { RealEstateDecisionLoop } from "@/components/real-estate-decision-loop";
 import { RealtimeMonitor } from "@/components/realtime-monitor";
 import { useLab } from "@/components/lab-provider";
 
-type LabTab = "xray" | "rls" | "realtime";
+type LabTab = "decision" | "xray" | "rls" | "realtime";
 
 const tabs: Array<{
   id: LabTab;
@@ -15,13 +16,14 @@ const tabs: Array<{
   label: string;
   concept: string;
 }> = [
-  { id: "xray", number: "01", label: "API X-Ray", concept: "Request → Response" },
-  { id: "rls", number: "02", label: "Auth / RLS", concept: "Identidad → Permiso" },
-  { id: "realtime", number: "03", label: "Realtime", concept: "Cambio → Evento" },
+  { id: "decision", number: "01", label: "Demo inmobiliaria", concept: "Dato → Decisión" },
+  { id: "xray", number: "02", label: "API X-Ray", concept: "Request → Response" },
+  { id: "rls", number: "03", label: "Auth / RLS", concept: "Identidad → Permiso" },
+  { id: "realtime", number: "04", label: "Realtime seguro", concept: "Cambio → Evento" },
 ];
 
 export function ApiExperienceLab() {
-  const [activeTab, setActiveTab] = useState<LabTab>("xray");
+  const [activeTab, setActiveTab] = useState<LabTab>("decision");
   const { session, signOut } = useLab();
 
   return (
@@ -31,7 +33,7 @@ export function ApiExperienceLab() {
           <span className="brand-mark">HS</span>
           <span>
             <strong>Helpful Support</strong>
-            <small>API Experience Lab · v0.4</small>
+            <small>Decision Experience Lab · v0.5</small>
           </span>
         </a>
         <div className="session-pill" data-authenticated={Boolean(session)}>
@@ -51,20 +53,20 @@ export function ApiExperienceLab() {
 
       <section className="hero" id="top">
         <div className="eyebrow">
-          <span>LABORATORIO CONECTADO</span>
+          <span>DECISION EXPERIENCE LAB</span>
           <span className="live-indicator">Supabase live</span>
         </div>
         <h1>
-          Mira una API por dentro.
-          <span> Rómpela. Protégela. Escúchala.</span>
+          Observa cómo un dato se convierte en decisión.
+          <span> Y exige ver su resultado.</span>
         </h1>
         <p>
-          Tres experiencias guiadas convierten conceptos abstractos en
-          solicitudes, decisiones de seguridad y eventos que puedes observar.
+          Una demo inmobiliaria recorre el ciclo mínimo completo. Los laboratorios
+          técnicos originales siguen disponibles para inspeccionar sus límites.
         </p>
         <div className="hero-metrics" aria-label="Cobertura del laboratorio">
-          <div><strong>3</strong><span>experiencias</span></div>
-          <div><strong>6</strong><span>capas visibles</span></div>
+          <div><strong>4</strong><span>acciones visibles</span></div>
+          <div><strong>1</strong><span>ciclo observable</span></div>
           <div><strong>0</strong><span>secret keys</span></div>
         </div>
       </section>
@@ -89,14 +91,15 @@ export function ApiExperienceLab() {
       </nav>
 
       <section className="experience-stage" aria-live="polite">
+        {activeTab === "decision" ? <RealEstateDecisionLoop /> : null}
         {activeTab === "xray" ? <ApiXRay /> : null}
         {activeTab === "rls" ? <AuthRlsChallenge /> : null}
         {activeTab === "realtime" ? <RealtimeMonitor /> : null}
       </section>
 
       <footer className="site-footer">
-        <span>Helpful Support v0.4</span>
-        <span>REST · RPC · Auth · RLS · Edge · Realtime</span>
+        <span>Helpful Support v0.5</span>
+        <span>Decision API · REST · Auth · RLS · Edge · Realtime</span>
         <a
           href="https://github.com/dinatalediego/helpful_support"
           target="_blank"

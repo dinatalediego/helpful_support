@@ -1,12 +1,15 @@
-# Helpful Support API Experience Lab v0.4
+# Helpful Support Decision Experience Lab v0.5
 
-Webapp educativa conectada al laboratorio Supabase existente. No añade otro backend: el navegador usa la publishable key, Supabase Auth entrega un JWT temporal y PostgreSQL aplica RLS.
+Webapp educativa que conserva el API Experience Lab v0.4 y añade una demo inmobiliaria de ciclo completo. Una sola Route Handler ejecuta reglas determinísticas y Supabase Broadcast transporta la asignación final. No se añadió otra aplicación ni una base de datos demo.
 
 ## Experiencias
 
+- **Decision Loop inmobiliario:** priorizar lead, recomendar unidad, consultar proyecto y observar una asignación Realtime.
 - **API X-Ray:** REST, RPC y Edge Function con request, response, status y latencia.
 - **Auth / RLS Challenge:** login, INSERT/SELECT/UPDATE propio y prueba segura de una fila sintética no autorizada.
 - **Realtime Monitor:** WebSocket sobre `hs_learning_runs` y visualización de INSERT/UPDATE.
+
+La demo inmobiliaria usa exclusivamente alias, proyectos y precios ficticios. Su evento Realtime es público, efímero y aislado por pestaña; no escribe en Sperant ni en PostgreSQL.
 
 ## Desarrollo local
 

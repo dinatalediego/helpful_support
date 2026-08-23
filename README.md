@@ -4,11 +4,23 @@ Biblioteca práctica y buscable para convertir ideas de software, datos y cienci
 
 ## Qué resuelve
 
-Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.4 combina tres laboratorios:
+Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.5 combina cuatro superficies:
 
 - **Local:** Markdown + SQLite FTS5, gratuito y reproducible.
 - **Remoto:** Supabase Data API + Auth/RLS + RPC + Realtime + Edge Function + feedback.
 - **Visual:** Next.js + Vercel para observar las APIs trabajando en tiempo real.
+- **Decisión:** demo inmobiliaria con reglas explicables y evidencia Realtime.
+
+## Decision Experience Lab v0.5
+
+La interfaz ubicada en `apps/web` abre con un camino mínimo inmobiliario de cuatro acciones:
+
+1. Priorizar tres leads ficticios con una regla visible.
+2. Recomendar una unidad disponible según distrito, dormitorios y presupuesto.
+3. Consultar la ficha ficticia del proyecto sin generación de texto libre.
+4. Asignar el lead y marcar el resultado como observado solo cuando el evento regresa por Supabase Broadcast.
+
+La demo no escribe en CRM, no persiste eventos y no afirma mejora comercial. Su objetivo es demostrar el circuito navegador → API → regla → decisión → WebSocket → interfaz. Consulta la [guía del Decision Loop](docs/95_real_estate_decision_loop.md).
 
 ## API Experience Lab v0.4
 
@@ -72,6 +84,7 @@ El observador [Realtime](examples/realtime_learning_runs.html) permite ver el ca
 - [Checklist de cierre](docs/70_definition_of_done.md)
 - [Supabase API Lab](docs/80_supabase_api_lab.md)
 - [API Experience Lab](docs/90_api_experience_lab.md)
+- [Decision Loop inmobiliario](docs/95_real_estate_decision_loop.md)
 - [Catálogo estructurado](catalog/api_families.json)
 
 ## Arquitectura
@@ -87,7 +100,7 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
                          └─ Métricas + feedback
 ```
 
-## Capacidades v0.4
+## Capacidades v0.5
 
 - 12 familias de APIs.
 - Cliente HTTP genérico con timeout, reintentos y backoff.
@@ -99,6 +112,7 @@ Markdown + JSON ──> SQLite FTS5 ──> CLI local
 - Feedback de recuperación protegido por RLS.
 - Observador Realtime autenticado sin persistencia de sesión.
 - Interfaz visual con request/response, desafíos RLS y stream Realtime.
+- Demo inmobiliaria sintética con priorización, matching, consulta sustentada y asignación Broadcast.
 - Pruebas unitarias y GitHub Actions.
 - Política de seguridad y definición de terminado.
 
