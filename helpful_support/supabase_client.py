@@ -65,7 +65,7 @@ class SupabaseLabClient:
         headers = {
             "Accept": "application/json",
             "apikey": self.config.publishable_key,
-            "User-Agent": "helpful-support/0.2",
+            "User-Agent": "helpful-support/0.3",
         }
         token = access_token or self.config.access_token
         if token:
@@ -94,6 +94,21 @@ class SupabaseLabClient:
             detail = exc.read().decode("utf-8", errors="replace")
             raise SupabaseAPIError(exc.code, detail[:500]) from exc
 
+    def _require_user_token(self, access_token: str | None) -> str:
+        token = access_token or self.config.access_token
+        if not token:
+            raise ValueError("SUPABASE_ACCESS_TOKEN is required for private user data.")
+        return token
+
+    @staticmethod
+    def _first_row(rows: Any, action: str) -> dict[str, Any]:
+        if not isinstance(rows, list) or not rows:
+            raise SupabaseAPIError(
+                404,
+                f"{action} returned no row; it may not exist or RLS may deny access.",
+            )
+        return rows[0]
+
     def list_families(self) -> list[dict[str, Any]]:
         result = self._request(
             "rest/v1/hs_api_families",
@@ -120,9 +135,7 @@ class SupabaseLabClient:
         method: str | None = None,
         access_token: str | None = None,
     ) -> dict[str, Any]:
-        token = access_token or self.config.access_token
-        if not token:
-            raise ValueError("SUPABASE_ACCESS_TOKEN is required for private learning runs.")
+        token = self._require_user_token(access_token)
         rows = self._request(
             "rest/v1/hs_learning_runs",
             method="POST",
@@ -135,9 +148,69 @@ class SupabaseLabClient:
             access_token=token,
             prefer="return=representation",
         )
-        if not isinstance(rows, list) or not rows:
-            raise SupabaseAPIError(500, "Insert returned no representation")
-        return rows[0]
+        return self._first_row(rows, "Insert")
+
+    def update_learning_run(
+        self,
+        run_id: str,
+        *,
+        status: str,
+        response_status: int | None,
+        latency_ms: int,
+        succeeded: bool,
+        evidence: Mapping[str, Any],
+        notes: str | None = None,
+        access_token: str | None = None,
+    ) -> dict[str, Any]:
+        """Close a user-owned run; the database remains the RLS authority."""
+        token = self._require_user_token(access_token)
+        rows = self._request(
+            "rest/v1/hs_learning_runs",
+            method="PATCH",
+            params={
+                "id": f"eq.{run_id}",
+                "select": (
+                    "id,status,response_status,latency_ms,succeeded,evidence,"
+                    "notes,updated_at"
+                ),
+            },
+            body={
+                "status": status,
+                "response_status": response_status,
+                "latency_ms": latency_ms,
+                "succeeded": succeeded,
+                "evidence": dict(evidence),
+                "notes": notes,
+            },
+            access_token=token,
+            prefer="return=representation",
+        )
+        return self._first_row(rows, "Update")
+
+    def create_search_feedback(
+        self,
+        query: str,
+        result_slugs: list[str],
+        *,
+        useful: bool,
+        comment: str | None = None,
+        access_token: str | None = None,
+    ) -> dict[str, Any]:
+        """Store user-owned retrieval feedback for later quality evaluation."""
+        token = self._require_user_token(access_token)
+        rows = self._request(
+            "rest/v1/hs_search_feedback",
+            method="POST",
+            body={
+                "query": query,
+                "result_slugs": result_slugs,
+                "useful": useful,
+                "comment": comment,
+            },
+            access_token=token,
+            prefer="return=representation",
+        )
+        return self._first_row(rows, "Feedback insert")
 
     def sign_in(self, email: str, password: str) -> dict[str, Any]:
         result = self._request(
@@ -157,9 +230,7 @@ class SupabaseLabClient:
         limit: int = 8,
         access_token: str | None = None,
     ) -> dict[str, Any]:
-        token = access_token or self.config.access_token
-        if not token:
-            raise ValueError("A user access token is required for the Edge Function.")
+        token = self._require_user_token(access_token)
         result = self._request(
             "functions/v1/hs-api-lab",
             method="POST",
