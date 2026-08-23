@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Helpful Support · Realtime Observer</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        background: #07130f;
+        color: #e8fff4;
+      }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; }
+      main { width: min(760px, calc(100% - 32px)); margin: 32px auto; }
+      .card { background: #0d2019; border: 1px solid #204c3b; border-radius: 18px; padding: 24px; }
+      h1 { margin: 0 0 8px; font-size: 1.6rem; }
+      p { color: #a9c9ba; line-height: 1.5; }
+      form { display: grid; gap: 14px; margin: 22px 0; }
+      label { display: grid; gap: 6px; color: #c9e7d9; }
+      input { box-sizing: border-box; width: 100%; border: 1px solid #31634e; border-radius: 10px; padding: 11px 12px; background: #081711; color: inherit; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      button { border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer; font-weight: 700; }
+      button[type="submit"] { background: #3ecf8e; color: #042c1d; }
+      button[type="button"] { background: #244538; color: #e8fff4; }
+      #status { font-weight: 700; color: #ffd479; }
+      pre { min-height: 180px; max-height: 360px; overflow: auto; padding: 14px; border-radius: 12px; background: #04100c; color: #baf7d9; white-space: pre-wrap; }
+      .note { font-size: .9rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Realtime · hs_learning_runs</h1>
+        <p>Inicia sesión y observa los cambios que RLS permite ver para tu usuario.</p>
+        <form id="connection-form">
+          <label>Supabase URL <input id="url" type="url" placeholder="https://TU_PROJECT_REF.supabase.co" required /></label>
+          <label>Publishable key <input id="key" type="password" placeholder="sb_publishable_..." required /></label>
+          <label>Email <input id="email" type="email" autocomplete="username" required /></label>
+          <label>Contraseña <input id="password" type="password" autocomplete="current-password" required /></label>
+          <label>Run ID a observar (opcional) <input id="run-id" placeholder="aae6afbf-..." /></label>
+          <div class="actions">
+            <button type="submit">Conectar</button>
+            <button id="disconnect" type="button">Desconectar</button>
+          </div>
+        </form>
+        <p>Estado: <span id="status">desconectado</span></p>
+        <pre id="events" aria-live="polite">Esperando conexión…</pre>
+        <p class="note">La sesión no se persiste. La contraseña se borra del formulario después de autenticar.</p>
+      </section>
+    </main>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2.111.0";
+
+      const form = document.querySelector("#connection-form");
+      const status = document.querySelector("#status");
+      const events = document.querySelector("#events");
+      const passwordInput = document.querySelector("#password");
+      let client = null;
+      let channel = null;
+
+      function log(message, value) {
+        const detail = value ? `\n${JSON.stringify(value, null, 2)}` : "";
+        events.textContent = `${new Date().toLocaleTimeString()} · ${message}${detail}\n\n${events.textContent}`;
+      }
+
+      async function disconnect() {
+        if (client && channel) await client.removeChannel(channel);
+        if (client) await client.auth.signOut({ scope: "local" });
+        client = null;
+        channel = null;
+        status.textContent = "desconectado";
+        log("Conexión cerrada");
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (client) await disconnect();
+        status.textContent = "autenticando…";
+
+        const url = document.querySelector("#url").value.trim().replace(/\/$/, "");
+        const key = document.querySelector("#key").value.trim();
+        const email = document.querySelector("#email").value.trim();
+        const password = passwordInput.value;
+        const runId = document.querySelector("#run-id").value.trim();
+
+        client = createClient(url, key, {
+          auth: { persistSession: false, autoRefreshToken: false },
+        });
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
+        passwordInput.value = "";
+        if (error) {
+          status.textContent = "error de autenticación";
+          log(error.message);
+          client = null;
+          return;
+        }
+
+        const userId = data.user.id;
+        channel = client
+          .channel(`hs-learning-runs-${userId}`)
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "hs_learning_runs",
+              filter: `user_id=eq.${userId}`,
+            },
+            (payload) => {
+              if (runId && payload.new.id !== runId) return;
+              log(`UPDATE recibido para ${payload.new.id}`, payload.new);
+            },
+          )
+          .subscribe((subscriptionStatus, error) => {
+            status.textContent = subscriptionStatus.toLowerCase();
+            if (error) log(error.message);
+            if (subscriptionStatus === "SUBSCRIBED") {
+              log(`Suscrito como ${email}; RLS limita los eventos a user_id=${userId}`);
+            }
+          });
+      });
+
+      document.querySelector("#disconnect").addEventListener("click", disconnect);
+      window.addEventListener("beforeunload", () => {
+        if (client && channel) client.removeChannel(channel);
+      });
+    </script>
+  </body>
+</html>
