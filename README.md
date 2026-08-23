@@ -4,32 +4,35 @@ Biblioteca práctica y buscable para convertir ideas de software, datos y cienci
 
 ## Qué resuelve
 
-Este repositorio no es otra colección de enlaces. Cada tema conecta cinco piezas:
+Cada tema conecta concepto, decisión, contrato, ejemplo ejecutable y evidencia de cierre. La v0.2 combina dos laboratorios:
 
-1. **Concepto** — qué problema resuelve.
-2. **Decisión** — cuándo usarlo y cuándo no.
-3. **Contrato** — entradas, salidas, errores y seguridad.
-4. **Ejemplo ejecutable** — código pequeño y comprobable.
-5. **Cierre** — prueba, observabilidad y criterio de éxito.
+- **Local:** Markdown + SQLite FTS5, gratuito y reproducible.
+- **Remoto:** Supabase Data API + Auth/RLS + RPC + Realtime + Edge Function.
 
-La primera versión incluye un RAG local sin costo basado en Markdown + SQLite FTS5, un catálogo de familias de APIs y clientes HTTP reutilizables.
+## Inicio rápido local
 
-## Inicio rápido
-
-Requiere Python 3.11+ y no necesita dependencias para el núcleo.
-
-```bash
-python scripts/verify.py
-python -m helpful_support.cli search "webhooks idempotencia"
-python -m helpful_support.cli api-family geospatial
-python -m unittest discover -s tests -v
-```
-
-En Windows PowerShell:
+Requiere Python 3.11+ y no necesita dependencias externas.
 
 ```powershell
 py scripts/verify.py
-py -m helpful_support.cli search "priorización de leads"
+py -m helpful_support.cli search "webhooks idempotencia"
+py -m helpful_support.cli api-family geospatial
+```
+
+## Inicio rápido Supabase
+
+Configura `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` como indica [Supabase API Lab](docs/80_supabase_api_lab.md):
+
+```powershell
+py -m helpful_support.cli remote-doctor
+py -m helpful_support.cli remote-list
+py -m helpful_support.cli remote-search "webhook idempotencia"
+```
+
+Para completar Auth → RLS → Edge Function:
+
+```powershell
+py examples/supabase_authenticated_lab.py
 ```
 
 ## Mapa de la biblioteca
@@ -42,24 +45,31 @@ py -m helpful_support.cli search "priorización de leads"
 - [Seguridad, privacidad y costos](docs/50_safety_costs.md)
 - [Mapa hacia tus proyectos](docs/60_project_adoption.md)
 - [Checklist de cierre](docs/70_definition_of_done.md)
+- [Supabase API Lab](docs/80_supabase_api_lab.md)
 - [Catálogo estructurado](catalog/api_families.json)
 
 ## Arquitectura
 
 ```text
-docs/*.md + catalog/*.json
-             |
-             v
-    scripts/build_index.py
-             |
-             v
-      data/library.db
-             |
-             v
-helpful_support.cli search / api-family
+Markdown + JSON ──> SQLite FTS5 ──> CLI local
+       │
+       └──────────> Supabase Data API
+                         ├─ REST / RPC
+                         ├─ Auth + RLS
+                         ├─ Realtime
+                         └─ Edge Function
 ```
 
-El índice generado se excluye de Git: siempre puede reconstruirse desde fuentes versionadas.
+## Capacidades v0.2
+
+- 12 familias de APIs.
+- Cliente HTTP genérico con timeout, reintentos y backoff.
+- Cliente Supabase sin dependencias para REST, Auth, RPC y Functions.
+- Catálogo público y registros de aprendizaje privados.
+- Búsqueda PostgreSQL flexible por prefijos.
+- Edge Function con JWT obligatorio.
+- Pruebas unitarias y GitHub Actions.
+- Política de seguridad y definición de terminado.
 
 ## Principios
 
@@ -68,11 +78,11 @@ El índice generado se excluye de Git: siempre puede reconstruirse desde fuentes
 - Registrar evidencia antes de automatizar decisiones.
 - Diseñar reintentos, idempotencia y límites desde el primer webhook.
 - Nunca guardar secretos ni datos personales en Git.
-- Un proyecto termina cuando existe evidencia de uso y resultado, no cuando “corre”.
+- Un proyecto termina cuando existe evidencia de uso y resultado.
 
 ## Próxima evolución
 
-La búsqueda lexical es el baseline auditable. Solo conviene añadir embeddings cuando exista evidencia de consultas que FTS5 no resuelva. El contrato de documentos permite migrar posteriormente a pgvector, Qdrant u otro vector store sin reescribir la biblioteca.
+Se recopilarán búsquedas y feedback antes de incorporar embeddings. `pgvector` y búsqueda híbrida se justificarán con un conjunto de evaluación donde el baseline FTS no recupere correctamente las fuentes.
 
 ## Licencia
 
